@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { State } from '../classes'
 
-const instance = axios.create({
+export const instance = axios.create({
   baseURL: '',
-  timeout: 60 * 1000,
-  responseType: 'json',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-  },
+  timeout: 120 * 1000,
+  // responseType: 'json',
+  // headers: {
+  //   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  // },
 })
 
 instance.interceptors.request.use(
@@ -61,5 +61,18 @@ export function curl<T = any>(
 
   options[method === 'get' ? 'params' : 'data'] = data
 
-  return instance({ ...options })
+  let str = ''
+  const query = data
+  const len = Object.keys(query).length
+  if (len) {
+    str = '?'
+    Object.keys(query).forEach((v, idx) => {
+      len - 1 === idx
+        ? (str += `${v}=${encodeURIComponent(query[v])}`)
+        : (str += `${v}=${encodeURIComponent(query[v])}&`)
+    })
+  }
+  options.url = url + str
+
+  return instance({ url: options.url, method: 'get' })
 }

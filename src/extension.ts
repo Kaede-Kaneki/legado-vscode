@@ -1,7 +1,8 @@
 import * as vscode from 'vscode'
-import { init, refresh } from './plugins'
+import { init, instance, refresh, reqBookChapterList, reqBookContent } from './plugins'
 import { State } from './classes'
 import { SidebarProvider, TreeNode } from './providers/sidebar'
+import { BookItem } from './types'
 
 export function activate(context: vscode.ExtensionContext) {
   State.context = context
@@ -17,8 +18,21 @@ export function activate(context: vscode.ExtensionContext) {
     sidebarProvider.refresh(),
   )
 
-  const openBook = vscode.commands.registerCommand('legado.open', (item: TreeNode) => {
+  const openBook = vscode.commands.registerCommand('legado.open', async (item: BookItem) => {
     console.log('open =>', item)
+
+    // const list = await reqBookChapterList({ url: encodeURIComponent(item.bookUrl) })
+    // console.log(list)
+
+    // instance.get(`http://10.50.105.174:1122/getBookContent`, {
+    //   params: { url: encodeURIComponent(item.bookUrl), index: item.durChapterIndex },
+    // })
+
+    const res = await reqBookContent({
+      url: encodeURIComponent(item.bookUrl),
+      index: item.durChapterIndex,
+    })
+    console.log(res)
   })
 
   context.subscriptions.push(initLegado, refreshBookshelf, openBook)
