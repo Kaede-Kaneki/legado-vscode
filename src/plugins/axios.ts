@@ -12,11 +12,13 @@ export const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const { data, params } = config
+    const { data, params, url, method } = config
 
     config.baseURL = State.get('server')
 
-    console.log('请求参数 =>', data || params)
+    console.log(`${url} [${method}] 请求参数 =>`, data || params)
+
+    console.log(config)
 
     return config
   },
@@ -61,18 +63,19 @@ export function curl<T = any>(
 
   options[method === 'get' ? 'params' : 'data'] = data
 
-  let str = ''
-  const query = data
-  const len = Object.keys(query).length
-  if (len) {
-    str = '?'
-    Object.keys(query).forEach((v, idx) => {
-      len - 1 === idx
-        ? (str += `${v}=${encodeURIComponent(query[v])}`)
-        : (str += `${v}=${encodeURIComponent(query[v])}&`)
-    })
-  }
-  options.url = url + str
+  // let str = ''
+  // const query = data
+  // const len = Object.keys(query).length
+  // if (len) {
+  //   str = '?'
+  //   Object.keys(query).forEach((v, idx) => {
+  //     len - 1 === idx
+  //       ? (str += `${v}=${encodeURIComponent(query[v])}`)
+  //       : (str += `${v}=${encodeURIComponent(query[v])}&`)
+  //   })
+  // }
+  // options.url = url + str
+  // options.params = undefined
 
-  return instance({ url: options.url, method: 'get' })
+  return instance({ ...options })
 }

@@ -21,15 +21,11 @@ export function activate(context: vscode.ExtensionContext) {
   const openBook = vscode.commands.registerCommand('legado.open', async (item: BookItem) => {
     console.log('open =>', item)
 
-    // const list = await reqBookChapterList({ url: encodeURIComponent(item.bookUrl) })
-    // console.log(list)
-
-    // instance.get(`http://10.50.105.174:1122/getBookContent`, {
-    //   params: { url: encodeURIComponent(item.bookUrl), index: item.durChapterIndex },
-    // })
+    const list = await reqBookChapterList({ url: item.bookUrl })
+    console.log(list)
 
     const res = await reqBookContent({
-      url: encodeURIComponent(item.bookUrl),
+      url: item.bookUrl,
       index: item.durChapterIndex,
     })
     console.log(res)
